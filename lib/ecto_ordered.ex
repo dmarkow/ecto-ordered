@@ -240,6 +240,7 @@ defmodule EctoOrdered do
     options.module
     |> where([r], field(r, ^rank_field) >= ^current_rank)
     |> exclude_existing(existing)
+    |> scope_query(options, cs)
     |> cs.repo.update_all([inc: [{rank_field, 1}]])
     cs
   end
@@ -249,6 +250,7 @@ defmodule EctoOrdered do
     options.module
     |> where([r], field(r, ^rank_field) <= ^current_rank)
     |> exclude_existing(existing)
+    |> scope_query(options, cs)
     |> cs.repo.update_all([inc: [{rank_field, -1}]])
     cs
   end
