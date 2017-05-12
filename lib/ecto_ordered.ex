@@ -123,7 +123,7 @@ defmodule EctoOrdered do
 
   def do_move(:down, options, changeset) do
     case get_next_two(options, changeset) do
-      {upper, lower} -> put_change(changeset, options.rank_field, rank_between(upper, lower))
+      {upper, lower} -> put_change(changeset, options.rank_field, rank_between(lower, upper))
       _ -> ensure_ranked(options, changeset)
     end
   end
