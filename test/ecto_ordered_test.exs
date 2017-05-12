@@ -17,7 +17,7 @@ defmodule EctoOrderedTest do
 
     def changeset(model, params) do
       model
-      |> cast(params, [:position, :title, :move])
+      |> cast(params, [:position, :title, :move, :rank])
       |> set_order(:position, :rank)
     end
 
@@ -190,6 +190,18 @@ defmodule EctoOrderedTest do
     assert Repo.get(Model, model3.id).rank == model3.rank
   end
 
+  test "moving an item :down with consecutive rankings" do
+    # Force sequential ranking so that moving model1 down causes a shift in ranks
+    model1 = Model.changeset(%Model{title: "item #1"}, %{}) |> Repo.insert!
+    model1 = Model.changeset(model1, %{rank: 0}) |> Repo.update!
+    model2 = Model.changeset(%Model{title: "item #2"}, %{}) |> Repo.insert!
+    model2 = Model.changeset(model2, %{rank: 1}) |> Repo.update!
+    model3 = Model.changeset(%Model{title: "item #3"}, %{}) |> Repo.insert!
+    model3 = Model.changeset(model3, %{rank: 2}) |> Repo.update!
+
+    Model.changeset(model1, %{move: :down}) |> Repo.update!
+    assert ranked_ids(Model) == [model2.id, model1.id, model3.id]
+  end
 
   ## Deletion
 
